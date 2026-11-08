@@ -2,13 +2,16 @@ package part2.dataframes
 
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types.{DoubleType, LongType, StringType, StructField, StructType}
+import common.LocalSession._
 
 object DataFramesBasics {
+
+  println(s"Debug: detected and using $host for Spark bind-address...")
+
   // Creating a SparkSession
   lazy val spark = SparkSession.builder()
     .appName("DataFramesBasics")
-    .config("spark.master", "local")
-    .getOrCreate()
+    .getOrCreateLocal()
 
   def main(args: Array[String]): Unit = {
 

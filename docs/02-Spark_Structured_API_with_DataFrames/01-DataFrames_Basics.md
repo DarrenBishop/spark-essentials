@@ -9,8 +9,7 @@ import common.LocalSession._
 ```scala mdoc
 val spark = SparkSession.builder()
     .appName("My Application")
-    .config("spark.master", "local")
-    .getOrCreate()
+    .getOrCreateLocal()
 ```
  - allows creating, reading and writing DataFrames
 
