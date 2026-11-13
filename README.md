@@ -7,7 +7,7 @@ This repository contains the code we wrote during [Rock the JVM's Spark Essentia
 - **Java**: JDK 17 or 21 (recommend [Eclipse Temurin 21](https://adoptium.net/))
 - **Docker**: [Docker Desktop](https://docker.com) (Mac/Windows) or Docker Engine (Linux)
 - **IDE**: [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the Scala plugin
-- **Windows-specific**: See [HadoopWindowsUserSetup.md](/HadoopWindowsUserSetup.md) or use WSL 2 (recommended)
+- **Windows-specific**: See [this guide](HadoopWindowsUserSetup.md) or use WSL 2 (recommended)
 
 > **Note**: Spark 4.x requires Java 17 or 21. Java 8 and 11 are **no longer supported**.
 
@@ -17,7 +17,7 @@ This repository contains the code we wrote during [Rock the JVM's Spark Essentia
 - Install JDK 17 or 21 ([Eclipse Temurin](https://adoptium.net/) recommended)
 - Either clone the repo or download as zip
 - Open with IntelliJ as an SBT project
-- Windows users: you need to set up some Hadoop-related configs — use [this guide](/HadoopWindowsUserSetup.md)
+- Windows users: you need to set up some Hadoop-related configs — use [this guide](HadoopWindowsUserSetup.md)
 - In a terminal window, navigate to the folder where you downloaded this repo and run `docker compose up` to start PostgreSQL and the Spark cluster
 - To spin up multiple Spark workers: `docker compose up --scale spark-worker=3`
 - Access the Spark Master UI at http://localhost:9090
