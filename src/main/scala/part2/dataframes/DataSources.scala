@@ -1,14 +1,18 @@
 package part2.dataframes
 
 import org.apache.spark.sql.{SaveMode, SparkSession}
-import org.apache.spark.sql.types.{DoubleType, LongType, StringType, StructField, StructType}
-import common.LocalSession._
+import org.apache.spark.sql.types.{DateType, DoubleType, LongType, StringType, StructField, StructType}
+import common._
 
 object DataSources {
+  debug()
+
+  val spark = SparkSession.builder()
+    .appName("Data Sources and Formats")
+    .getOrCreateLocal()
+
+
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder()
-      .appName("Data Sources and Formats")
-      .getOrCreateLocal()
 
     // Schema
     val carsSchema = StructType(Array(
@@ -19,7 +23,7 @@ object DataSources {
       StructField("Horsepower", LongType),
       StructField("Weight_in_lbs", LongType),
       StructField("Acceleration", DoubleType),
-      StructField("Year", StringType),
+      StructField("Year", DateType),
       StructField("Origin", StringType)
     ))
 
@@ -46,16 +50,8 @@ object DataSources {
       ))
       .load()
 
-    val carsDFWithJson = spark.read
-      .options(Map(
-        "mode"-> "failFast",
-        "inferSchema" -> "true",
-      ))
-      .json("src/main/resources/data/cars.json")
-
     carsDF.show()
     carsDFWithOptionMap.show()
-    carsDFWithJson.show()
 
     /*
       Writing DFs
@@ -71,5 +67,59 @@ object DataSources {
       .option("path", "target/spark/data/cars.json")
       .save()
       //.save("target/spark/data/cars.json")
+
+    // JSON flags
+    spark.read
+      //.format("json")
+      .schema(carsSchema)
+      .option("dateFormat", "yyyy-MM-dd") // couple with schema; if Spark fails parsing, it will put null (i.e. permissive)
+      .option("allowSingleQuotes", "true")
+      .option("compression", "uncompressed") // bzip2, gzip, lz4 (7zip), snappy, and deflate
+      //.load("src/main/resources/data/cars.json")
+      .json("src/main/resources/data/cars.json")
+      .show()
+
+    // CSV flags
+    val stocksSchema = StructType(Array(
+      StructField("symbol", StringType),
+      StructField("date", DateType),
+      StructField("price", DoubleType),
+    ))
+
+    val stocksDF = spark.read
+      .format("csv")
+      .schema(stocksSchema)
+      .option("dateFormat", "MMM dd yyyy")
+      .option("header", "true")
+      .option("sep", ",")
+      .option("nullValue", "")
+      .load("src/main/resources/data/stocks.csv")
+
+    stocksDF.printSchema()
+    stocksDF.show()
+
+    // Parquet files
+    carsDF.write
+      .mode(SaveMode.Overwrite)
+      //.format("parquet")
+      //.parquet("target/spark/data/cars.parquet")
+      .save("target/spark/data/cars.parquet")
+
+    // Text files
+    spark.read
+      .text("src/main/resources/data/sampleTextFile.txt")
+      .show()
+
+    // Reading from a remote DB
+    val employeesDF = spark.read
+      .format("jdbc")
+      .option("driver", DB.driver)
+      .option("url", DB.url)
+      .option("user", DB.user)
+      .option("password", DB.password)
+      .option("dbtable", "public.employees")
+      .load()
+
+    employeesDF.show()
   }
 }
