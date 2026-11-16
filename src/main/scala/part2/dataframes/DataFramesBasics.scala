@@ -2,11 +2,11 @@ package part2.dataframes
 
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types.{DoubleType, LongType, StringType, StructField, StructType}
-import common.LocalSession._
+import common._
 
 object DataFramesBasics {
 
-  println(s"Debug: detected and using $host for Spark bind-address...")
+  debug()
 
   // Creating a SparkSession
   lazy val spark = SparkSession.builder()
@@ -14,12 +14,6 @@ object DataFramesBasics {
     .getOrCreateLocal()
 
   def main(args: Array[String]): Unit = {
-
-    sys.env.filter(_._1.startsWith("DYL")).foreach(println)
-
-    println(s"Hadoop: ${org.apache.hadoop.util.VersionInfo.getVersion}")
-    println(s"Architecture: ${System.getProperty("os.arch")}")
-    println(s"Native Hadoop loaded: ${org.apache.hadoop.util.NativeCodeLoader.isNativeCodeLoaded}")
 
     // Reading a DataFrame (DF)
     val firstDF = spark.read
