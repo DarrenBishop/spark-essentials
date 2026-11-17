@@ -1,4 +1,4 @@
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Column, DataFrame, SparkSession}
 
 import java.nio.file.Path
 import java.util.Properties
@@ -35,5 +35,19 @@ package object common {
 
   object target {
     def / (path: String): Path = Path.of("target/spark/data") / path
+  }
+
+  implicit class DataFrameOps(val df: DataFrame) extends AnyVal {
+    def one(): Unit = df.show(1)
+    def two(): Unit = df.show(2)
+    def five(): Unit = df.show(5)
+  }
+
+  implicit class ColumnOps(val column: Column) extends AnyVal {
+    def := (name: String): Column = column as name
+  }
+
+  implicit class StringColumnOps(val name: String) extends AnyVal {
+    def := (column: Column): Column = column := name
   }
 }
