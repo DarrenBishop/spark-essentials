@@ -37,11 +37,22 @@ package object common {
     def / (path: String): Path = Path.of("target/spark/data") / path
   }
 
+  type ColumnSpec = Either[String, Column]
+
   implicit class DataFrameOps(val df: DataFrame) extends AnyVal {
     def one(): Unit = df.show(1)
     def two(): Unit = df.show(2)
     def five(): Unit = df.show(5)
+    def selectX(column: ColumnSpec, rest: ColumnSpec*): DataFrame = {
+      df.select((column +: rest).map {
+        case Left(string) => new Column(string)
+        case Right(column) => column
+      }: _*)
+    }
   }
+
+  implicit def stringToColumnSpec(string: String): ColumnSpec = Left(string)
+  implicit def columnToColumnSpec(column: Column): ColumnSpec = Right(column)
 
   implicit class ColumnOps(val column: Column) extends AnyVal {
     def := (name: String): Column = column as name
