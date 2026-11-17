@@ -9,6 +9,7 @@ object DataSources {
 
   val spark = SparkSession.builder()
     .appName("Data Sources and Formats")
+    .legacyDates()
     .getOrCreateLocal()
 
 
@@ -64,9 +65,9 @@ object DataSources {
     carsDF.write
       .format("json")
       .mode(SaveMode.Overwrite)
-      .option("path", "target/spark/data/cars.json")
+      .option("path", target / "cars.json")
       .save()
-      //.save("target/spark/data/cars.json")
+      //.save(target / "cars.json")
 
     // JSON flags
     spark.read
@@ -102,8 +103,8 @@ object DataSources {
     carsDF.write
       .mode(SaveMode.Overwrite)
       //.format("parquet")
-      //.parquet("target/spark/data/cars.parquet")
-      .save("target/spark/data/cars.parquet")
+      //.parquet(target / "cars.parquet")
+      .save(target / "cars.parquet")
 
     // Text files
     spark.read
