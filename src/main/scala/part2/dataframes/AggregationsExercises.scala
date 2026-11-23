@@ -38,15 +38,15 @@ object AggregationsExercises {
         "US_DVD_Sales",
       )
       .withColumn("Total_Sales", $$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales")
-      .agg("Profits" := sum($$"Total_Sales"))
+      .agg("All_Sales" := sum($$"Total_Sales"))
       .show()
 
     moviesDF
-      .agg("Profits" := sum($$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales"))
+      .agg("All_Sales" := sum($$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales"))
       .show()
 
     moviesDF
-      .select("Profits" := sum($$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales"))
+      .select("All_Sales" := sum($$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales"))
       .show()
 
     // Answer 2
@@ -62,6 +62,22 @@ object AggregationsExercises {
       .select(
         "Avg. Revenue" := mean($$"US_Gross"),
         "Std.D. Revenue" := stddev($$"US_Gross"),
+      )
+      .show()
+
+    // Answer 4
+    moviesDF
+      .where(isnotnull($"Director"))
+      .groupBy($"Director")
+      .agg(
+        "Avg. IMDB Rating" := avg($$"IMDB_Rating"),
+        "Avg. US Gross" := mean($$"US_Gross"),
+        "Total. US Gross" := sum($$"US_Gross"),
+        "#. of Movies" := count($$"US_Gross"),
+      )
+      .orderBy(
+        $"`Avg. IMDB Rating`".desc_nulls_last,
+        $"`Total. US Gross`".desc_nulls_last
       )
       .show()
   }
