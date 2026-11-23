@@ -60,8 +60,8 @@ object AggregationsExercises {
     // Answer 3
     moviesDF
       .select(
-        "Average Revenue" := mean($$"US_Gross"),
-        "Std. Deviation" := stddev($$"US_Gross"),
+        "Avg. Revenue" := mean($$"US_Gross"),
+        "Std.D. Revenue" := stddev($$"US_Gross"),
       )
       .show()
   }
