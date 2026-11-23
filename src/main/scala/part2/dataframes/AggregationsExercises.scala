@@ -56,5 +56,13 @@ object AggregationsExercises {
     moviesDF
       .select("Directors" := count_distinct($"Director"))
       .show()
+
+    // Answer 3
+    moviesDF
+      .select(
+        "Average Revenue" := mean($$"US_Gross"),
+        "Std. Deviation" := stddev($$"US_Gross"),
+      )
+      .show()
   }
 }
