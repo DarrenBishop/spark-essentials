@@ -61,4 +61,16 @@ package object common {
   implicit class StringColumnOps(val name: String) extends AnyVal {
     def := (column: Column): Column = column := name
   }
+
+  implicit class ColumnInterpolator(val sc: StringContext) extends AnyVal {
+    import org.apache.spark.sql.functions.{column, zeroifnull}
+
+    /**
+     * Money - wrap column in [[zeroifnull]]
+     */
+    def $$ (parts: Any*): Column = {
+      val name = sc.s(parts: _*)
+      s"zeroed($name)" := zeroifnull(column(name))
+    }
+  }
 }
