@@ -103,3 +103,63 @@ moviesDF
   .orderBy($"Avg Rating")
   .show()
 ```
+
+## Wide Transformations
+
+### One or more input partitions => One or more output partitions
+Starting with 4 input-partitions, containing 8 datums , `groupBy` will shuffle them, possibly into
+a different assignment of partitions, e.g. the same 8 datums, but across 3 partitions:
+```mermaid
+---
+config:
+  layout: elk
+  markdownAutoWrap: false
+  elk:
+    preset: modelOrder
+    considerModelOrder:
+      strategy: NODES_AND_EDGES
+    forceNodeModelOrder: true
+  flowchart:
+    curve: stepBefore
+    wrappingWidth: 300
+    minNodeWidth: 300
+    useMaxWidth: false
+---
+flowchart TB
+    subgraph INPUT["Input partitions"]
+        direction LR
+        A["🟦 🟦 🟦 🟦 🟦 🟦\n🟩 🟩 🟩 🟩 🟩 🟩"]
+        B["🟧 🟧 🟧 🟧 🟧 🟧\n🟧 🟧 🟧 🟧 🟧 🟧"]
+        C["🟧 🟧 🟧 🟧 🟧 🟧\n🟦 🟦 🟦 🟦 🟦 🟦"]
+        D["🟦 🟦 🟦 🟦 🟦 🟦\n🟩 🟩 🟩 🟩 🟩 🟩"]
+    end
+
+    subgraph OUTPUT["Shuffle partitions"]
+        direction LR
+        E["🟦 🟦 🟦 🟦 🟦 🟦\n🟦 🟦 🟦 🟦 🟦 🟦\n🟦 🟦 🟦 🟦 🟦 🟦"]
+        F["🟧 🟧 🟧 🟧 🟧 🟧\n🟧 🟧 🟧 🟧 🟧 🟧\n🟧 🟧 🟧 🟧 🟧 🟧"]
+        G["🟩 🟩 🟩 🟩 🟩 🟩\n🟩 🟩 🟩 🟩 🟩 🟩"]
+    end
+
+    A e1@--> E
+    A e2@--> G
+    B e3@--> F
+    C e4@--> E
+    C e5@--> F
+    D e6@--> E
+    D e7@--> G
+
+    classDef stage fill:none,stroke:none
+    class INPUT,OUTPUT stage
+
+    classDef partition fill:#ffffff,stroke:#cccccc,color:#222222
+    class A,B,C,D,E,F,G partition
+
+    classDef blue stroke: #2c5795, stroke-width: 3px 
+    classDef green stroke: #53823b, stroke-width: 3px 
+    classDef orange stroke: #e7802e, stroke-width: 3px
+    
+    class e1,e4,e6 blue
+    class e2,e7 green
+    class e3,e5 orange
+```
