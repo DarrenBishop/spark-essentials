@@ -48,5 +48,13 @@ object AggregationsExercises {
     moviesDF
       .select("Profits" := sum($$"US_Gross" + $$"Worldwide_Gross" + $$"US_DVD_Sales"))
       .show()
+
+    // Answer 2
+    moviesDF
+      .select("Directors (Occurred)" := count($"Director"), "Directors (Distinct)" := count_distinct($"Director"))
+      .show()
+    moviesDF
+      .select("Directors" := count_distinct($"Director"))
+      .show()
   }
 }
